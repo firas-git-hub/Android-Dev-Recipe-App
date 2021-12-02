@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipiesListActivity">
+    tools:context=".RecipesListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recipiesRecyclerView"
+        android:id="@+id/recipesRecyclerView"
         android:layout_width="407dp"
         android:layout_height="0dp"
+        android:layout_margin="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
