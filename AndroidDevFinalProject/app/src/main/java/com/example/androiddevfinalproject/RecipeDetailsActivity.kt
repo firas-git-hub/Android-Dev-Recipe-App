@@ -1,15 +1,16 @@
 package com.example.androiddevfinalproject
 
+import Model.entities.Recipe
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import java.net.URL
 
@@ -30,7 +31,7 @@ class recipeDetailsActivity : AppCompatActivity() {
 
         bindVariables()
         setEvents()
-        loadrecipe()
+        loadrecipe(recipeList.recipes[recipeIndex])
     }
 
     fun bindVariables(){
@@ -47,11 +48,26 @@ class recipeDetailsActivity : AppCompatActivity() {
 
     }
     
-    fun loadrecipe(){
+    fun loadrecipe(recipe: Recipe){
         if (recipeIndex != -1){
-            recipeImageView.setImageBitmap(loadBitmapFromImage(recipeList.recipes[recipeIndex].imgUrl))
-            recipeTextView.text = recipeList.recipes[recipeIndex].name
-
+            recipeImageView.setImageBitmap(loadBitmapFromImage(URL(recipe.imgUrl)))
+            recipeTextView.text = recipe.name
+            var recipeIngredients: ArrayList<String> = ArrayList(recipe.ingredients.split(","))
+            var ingAdapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, recipeIngredients)
+            recipeIngredientsListView.adapter = ingAdapter
+        }
+        recipeSaveButton.setOnClickListener {
+            saveRecipeToFirebase(recipe.id)
+        }
+        recipeWebhookButton.setOnClickListener {
+            val source = recipe.source
+            if(source != null){
+                val openUrl = Intent(Intent.ACTION_VIEW)
+                openUrl.data = Uri.parse(source)
+                startActivity(openUrl)
+            }
+            else
+                Toast.makeText(this, "Link is broken :( .", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -67,5 +83,9 @@ class recipeDetailsActivity : AppCompatActivity() {
             e.printStackTrace()
         }
         return image
+    }
+
+    fun saveRecipeToFirebase(id: String){
+
     }
 }

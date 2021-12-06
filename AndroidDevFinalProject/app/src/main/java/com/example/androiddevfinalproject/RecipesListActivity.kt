@@ -1,5 +1,6 @@
 package com.example.androiddevfinalproject
 
+import Model.RecipeDbService.RecipeApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -40,6 +41,10 @@ class RecipesListActivity : AppCompatActivity() {
     }
 
     fun loadrecipes(){
+        RecipeApiService.getRecipies(intent.getStringExtra("countryType")!!, "public", this.applicationContext, recipesRecyclerView)
+    }
+
+    fun loadSavedrecipes(){
         if(intent.hasExtra("savedrecipes")){
             isSavedrecipesRequest = intent.getBooleanExtra("savedrecipes", false)
             loadSavedrecipes()
@@ -47,10 +52,6 @@ class RecipesListActivity : AppCompatActivity() {
         else{
             loadrecipesFromSelectedCountry()
         }
-    }
-
-    fun loadSavedrecipes(){
-
     }
 
     fun loadrecipesFromSelectedCountry(){

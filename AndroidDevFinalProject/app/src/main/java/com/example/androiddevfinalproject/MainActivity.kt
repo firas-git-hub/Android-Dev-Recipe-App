@@ -1,7 +1,7 @@
 package com.example.androiddevfinalproject
 
 import Model.CheckPermissionsService
-import Model.DummyMarkerCoords
+import Model.MarkerCoords
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
     }
 
     fun loadMarkers(map: GoogleMap){
-        for (marker in DummyMarkerCoords.markers) {
+        for (marker in MarkerCoords.markers) {
             map.addMarker(
                 MarkerOptions()
                     .position(LatLng(marker.lat, marker.lng ))
@@ -118,6 +118,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
 
     override fun onInfoWindowClick(p0: Marker) {
         val intent = Intent(this, RecipesListActivity::class.java)
+        intent.putExtra("countryType", p0.title)
         startActivity(intent)
     }
 }

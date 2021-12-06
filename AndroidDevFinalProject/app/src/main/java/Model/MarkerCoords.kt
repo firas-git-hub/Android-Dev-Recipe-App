@@ -1,9 +1,8 @@
 package Model
 
 import Model.entities.LatLon
-import com.google.android.gms.maps.model.LatLng
 
-object DummyMarkerCoords {
+object MarkerCoords {
     var markers: ArrayList<LatLon> = arrayListOf(
         LatLon("Asian",46.906723022669915, 85.70011895341293),
         LatLon("American",41.66935844138963, -103.82149735743172),

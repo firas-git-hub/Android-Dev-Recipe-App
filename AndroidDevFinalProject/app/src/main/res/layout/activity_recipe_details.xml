@@ -31,7 +31,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            app:cardBackgroundColor="#2196F3">
+            app:cardBackgroundColor="#2196F3"
+            app:cardElevation="5dp"
+            app:cardMaxElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"

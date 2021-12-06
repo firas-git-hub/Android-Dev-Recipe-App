@@ -33,7 +33,7 @@ class recipesAdapter(mContext: Context) : RecyclerView.Adapter<recipesAdapter.Vi
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val url: URL = URL("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.akc.org%2Fexpert-advice%2Flifestyle%2Fcute-puppies%2F&psig=AOvVaw1JqlY8yFg0-e4RK4knRFca&ust=1638442088164000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCNiLxMe2wvQCFQAAAAAdAAAAABAD")/*recipeList.recipes[position].imgUrl*/
+        var url = recipeList.recipes[position].imgUrl
         if(url != null){
             Glide.with(context)
                 .load(url)
