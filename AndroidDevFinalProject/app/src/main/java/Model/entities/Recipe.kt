@@ -5,13 +5,13 @@ import java.net.URL
 
 data class Recipe(
     val id: String = "",
-    @SerializedName("label") val name: String,
-    @SerializedName("cuisineType") val countryType: String,
-    @SerializedName("ingredientLines") val ingredients: String,
-    @SerializedName("image") val imgUrl: String,
-    @SerializedName("source") val source: String,
-    @SerializedName("mealType") val mealType: String,
-    @SerializedName("dishType") val dishType: String,
-    @SerializedName("calories") val calories: Double,
-    @SerializedName("totalWeight") val totalWeight: Double
+    @SerializedName("label") var name: String,
+    @SerializedName("cuisineType") var countryType: String,
+    @SerializedName("ingredientLines") var ingredients: String,
+    @SerializedName("image") var imgUrl: String,
+    @SerializedName("source") var source: String,
+    @SerializedName("mealType") var mealType: String,
+    @SerializedName("dishType") var dishType: String,
+    @SerializedName("calories") var calories: Double,
+    @SerializedName("totalWeight") var totalWeight: Double
 )
