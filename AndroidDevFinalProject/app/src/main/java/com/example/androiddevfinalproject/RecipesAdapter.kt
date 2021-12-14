@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import java.net.URL
 
 
 class recipesAdapter(mContext: Context) : RecyclerView.Adapter<recipesAdapter.ViewHolder>() {
@@ -42,9 +41,9 @@ class recipesAdapter(mContext: Context) : RecyclerView.Adapter<recipesAdapter.Vi
         }
         holder.recipeNameTV.text = recipeList.recipes[position].name
         holder.recipeCountryTV.text = recipeList.recipes[position].countryType
-        holder.recipeDescriptionTV.text
+        holder.recipeDescriptionTV.text = recipeList.recipes[position].mealType + ",\r\n" + recipeList.recipes[position].calories + ",\r\n"
         holder.recipeButton.setOnClickListener {
-            val intent = Intent(context, MainActivity::class.java)
+            val intent = Intent(context, RecipeDetailsActivity::class.java)
             intent.putExtra("recipeIndex", position)
             startActivity(context,intent,null)
         }

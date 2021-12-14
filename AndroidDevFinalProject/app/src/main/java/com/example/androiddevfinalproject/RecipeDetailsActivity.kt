@@ -9,12 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import java.net.URL
 
-class recipeDetailsActivity : AppCompatActivity() {
+class RecipeDetailsActivity : AppCompatActivity() {
 
     lateinit var webView: WebView
     lateinit var recipeImageView: ImageView
@@ -49,10 +50,18 @@ class recipeDetailsActivity : AppCompatActivity() {
     }
     
     fun loadrecipe(recipe: Recipe){
+        this.webView.webViewClient = WebViewClient()
+        this.webView.loadUrl(recipe.source)
         if (recipeIndex != -1){
-            recipeImageView.setImageBitmap(loadBitmapFromImage(URL(recipe.imgUrl)))
+            var url = recipe.imgUrl
+            if(url != null){
+                Glide.with(applicationContext)
+                    .load(url)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(recipeImageView)
+            }
             recipeTextView.text = recipe.name
-            var recipeIngredients: ArrayList<String> = ArrayList(recipe.ingredients.split(","))
+            var recipeIngredients: ArrayList<String> = ArrayList(recipe.ingredients.split("$"))
             var ingAdapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, recipeIngredients)
             recipeIngredientsListView.adapter = ingAdapter
         }
@@ -62,8 +71,7 @@ class recipeDetailsActivity : AppCompatActivity() {
         recipeWebhookButton.setOnClickListener {
             val source = recipe.source
             if(source != null){
-                val openUrl = Intent(Intent.ACTION_VIEW)
-                openUrl.data = Uri.parse(source)
+                val openUrl = Intent(Intent.ACTION_VIEW, Uri.parse(source))
                 startActivity(openUrl)
             }
             else
@@ -86,6 +94,6 @@ class recipeDetailsActivity : AppCompatActivity() {
     }
 
     fun saveRecipeToFirebase(id: String){
-
+        TODO("Connect to firebase and decide on the model, then upload the data")
     }
 }

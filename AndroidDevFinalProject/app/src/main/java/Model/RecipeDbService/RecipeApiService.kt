@@ -16,22 +16,34 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.coroutines.suspendCoroutine
 
 object RecipeApiService {
 
-    fun getRecipies(cuisineType: String, type: String, context: Context, recyclerView: RecyclerView) {
+    fun getRecipies(
+        cuisineType: String,
+        type: String,
+        context: Context,
+        recyclerView: RecyclerView
+    ) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.edamam.com/api/recipes/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service = retrofit.create(RecipeApiInterface::class.java)
-        val call: Call<JsonElement> = service.getRecipies(context.getString(R.string.edamamDBAppKey), context.getString(R.string.edamamDBAppId), type, cuisineType)
+        val call: Call<JsonElement> = service.getRecipies(
+            context.getString(R.string.edamamDBAppKey),
+            context.getString(R.string.edamamDBAppId),
+            type,
+            cuisineType
+        )
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful) {
                     bindValues(response)
                     recyclerView.adapter!!.notifyDataSetChanged()
+
                 }
             }
 
@@ -41,28 +53,37 @@ object RecipeApiService {
         })
     }
 
-    private fun bindValues(response: Response<JsonElement>){
-        var gson: Gson = Gson()
+    private fun bindValues(response: Response<JsonElement>) {
+        var gson = Gson()
         var data: JsonObject = gson.fromJson(response.body(), JsonObject::class.java)
         var hits = data.get("hits").asJsonArray
-        loadDataintoTable(hits)
+        loadDataIntoTable(hits)
     }
 
-    private fun loadDataintoTable(data: JsonArray){
-        var tmpRecipe = Recipe("", "", "", "", "", "", "","", 0.0, 0.0)
+    private fun loadDataIntoTable(data: JsonArray) {
+        var tmpRecipeList: ArrayList<Recipe> = ArrayList()
         data.forEach {
+            var tmpRecipe = Recipe("", "", "", "", "", "", "", "", 0.0, 0.0)
             var recipeObject = it.asJsonObject.get("recipe").asJsonObject
-            tmpRecipe.countryType = recipeObject.get("cuisineType").asJsonArray.toString()
+            tmpRecipe.countryType =
+                jsonArrayToCustomString(recipeObject.getAsJsonArray("cuisineType"))
             tmpRecipe.calories = recipeObject.get("calories").asDouble
-            tmpRecipe.dishType = recipeObject.get("dishType").asJsonArray.toString()
+            tmpRecipe.dishType = jsonArrayToCustomString(recipeObject.getAsJsonArray("dishType"))
             tmpRecipe.imgUrl = recipeObject.get("image").asString
-            tmpRecipe.mealType = recipeObject.get("mealType").asJsonArray.toString()
+            tmpRecipe.mealType = jsonArrayToCustomString(recipeObject.getAsJsonArray("mealType"))
             tmpRecipe.name = recipeObject.get("label").asString
-            tmpRecipe.source = recipeObject.get("source").asString
+            tmpRecipe.source = recipeObject.get("url").asString
             tmpRecipe.totalWeight = recipeObject.get("totalWeight").asDouble
-            tmpRecipe.ingredients = recipeObject.get("ingredientLines").asJsonArray.toString()
-            recipeList.recipes.add(tmpRecipe)
-            TODO("manage the smaller arrays and turn them into strings.")
+            tmpRecipe.ingredients =
+                jsonArrayToCustomString(recipeObject.getAsJsonArray("ingredientLines"))
+            tmpRecipeList.add(tmpRecipe)
         }
+        recipeList.recipes = tmpRecipeList
+    }
+
+    private fun jsonArrayToCustomString(jsonArray: JsonArray): String {
+        var res = ""
+        jsonArray.forEach { element -> res += "$element$\r\n" }
+        return res.substring(0, res.lastIndexOf("$")).replace("\"", "").replace("[", "")
     }
 }
