@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.net.URL
 
 data class Recipe(
-    val id: String = "",
+    var id: String = "",
     @SerializedName("label") var name: String,
     @SerializedName("cuisineType") var countryType: String,
     @SerializedName("ingredientLines") var ingredients: String,

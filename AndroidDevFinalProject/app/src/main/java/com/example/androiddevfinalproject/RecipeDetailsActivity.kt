@@ -1,5 +1,6 @@
 package com.example.androiddevfinalproject
 
+import Model.RecipeDbService.FirebaseService
 import Model.entities.Recipe
 import android.content.Intent
 import android.graphics.Bitmap
@@ -23,7 +24,8 @@ class RecipeDetailsActivity : AppCompatActivity() {
     lateinit var recipeSaveButton: Button
     lateinit var recipeWebhookButton: Button
     lateinit var recipeIngredientsListView: ListView
-    
+    lateinit var goBackButton: Button
+    var fbService = FirebaseService()
     var recipeIndex: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +45,10 @@ class RecipeDetailsActivity : AppCompatActivity() {
         recipeSaveButton = findViewById(R.id.recipeDetailsSaveBut)
         recipeWebhookButton = findViewById(R.id.recipeDetailsWebhookBut)
         recipeIngredientsListView = findViewById(R.id.recipeDetailsIngList)
+        goBackButton = findViewById(R.id.goBackFromRecipeDetails)
+        goBackButton.setOnClickListener {
+            finish()
+        }
     }
 
     fun setEvents(){
@@ -66,7 +72,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
             recipeIngredientsListView.adapter = ingAdapter
         }
         recipeSaveButton.setOnClickListener {
-            saveRecipeToFirebase(recipe.id)
+            saveRecipeToFirebase(recipe)
         }
         recipeWebhookButton.setOnClickListener {
             val source = recipe.source
@@ -79,21 +85,8 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    fun loadBitmapFromImage(imgUrl: URL): Bitmap?{
-        val imageURL = imgUrl.toString()
-        var image: Bitmap? = null
-        try {
-            val `in` = java.net.URL(imageURL).openStream()
-            image = BitmapFactory.decodeStream(`in`)
-        }
-        catch (e: Exception) {
-            Log.e("Error Message", e.message.toString())
-            e.printStackTrace()
-        }
-        return image
-    }
 
-    fun saveRecipeToFirebase(id: String){
-        TODO("Connect to firebase and decide on the model, then upload the data")
+    fun saveRecipeToFirebase(recipe: Recipe){
+        fbService.writeRecipeToDb(recipe, applicationContext)
     }
 }

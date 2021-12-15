@@ -1,5 +1,6 @@
 package com.example.androiddevfinalproject
 
+import Model.RecipeDbService.FirebaseService
 import Model.RecipeDbService.RecipeApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ class RecipesListActivity : AppCompatActivity() {
     lateinit var recipesRecyclerView: RecyclerView
     lateinit var spinnerProgress: ProgressBar
     var isSavedrecipesRequest = false
+    var firebaseService = FirebaseService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +34,7 @@ class RecipesListActivity : AppCompatActivity() {
     fun bindVariables() {
         goBackButton = findViewById(R.id.goBackFromRecipesListBut)
         goBackButton.setOnClickListener {
-            intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
         recipesRecyclerView = findViewById(R.id.recipesRecyclerView)
         recipesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -46,20 +47,21 @@ class RecipesListActivity : AppCompatActivity() {
     }
 
     fun loadrecipes(){
-        RecipeApiService.getRecipies(intent.getStringExtra("countryType")!!, "public", this.applicationContext, recipesRecyclerView)
-    }
-
-    fun loadSavedrecipes(){
-        if(intent.hasExtra("savedrecipes")){
-            isSavedrecipesRequest = intent.getBooleanExtra("savedrecipes", false)
-            loadSavedrecipes()
+        if(intent.hasExtra("savedRecipes")){
+            if(intent.getBooleanExtra("savedRecipes",false))
+            loadSavedrecipes(recipesRecyclerView)
         }
         else{
             loadrecipesFromSelectedCountry()
         }
+
+    }
+
+    fun loadSavedrecipes(recipesRV: RecyclerView){
+        firebaseService.readRecipesFromDb(recipesRV)
     }
 
     fun loadrecipesFromSelectedCountry(){
-        TODO("Get the recipes from firebase and load them")
+        RecipeApiService.getRecipies(intent.getStringExtra("countryType")!!, "public", this.applicationContext, recipesRecyclerView)
     }
 }

@@ -40,8 +40,8 @@ class recipesAdapter(mContext: Context) : RecyclerView.Adapter<recipesAdapter.Vi
                 .into(holder.recipeImgIV)
         }
         holder.recipeNameTV.text = recipeList.recipes[position].name
-        holder.recipeCountryTV.text = recipeList.recipes[position].countryType
-        holder.recipeDescriptionTV.text = recipeList.recipes[position].mealType + ",\r\n" + recipeList.recipes[position].calories + ",\r\n"
+        holder.recipeCountryTV.text = recipeList.recipes[position].countryType.replace("$", ",")
+        holder.recipeDescriptionTV.text = recipeList.recipes[position].mealType + ", " + recipeList.recipes[position].calories + " cals"
         holder.recipeButton.setOnClickListener {
             val intent = Intent(context, RecipeDetailsActivity::class.java)
             intent.putExtra("recipeIndex", position)

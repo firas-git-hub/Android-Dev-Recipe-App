@@ -57,14 +57,16 @@ object RecipeApiService {
         var gson = Gson()
         var data: JsonObject = gson.fromJson(response.body(), JsonObject::class.java)
         var hits = data.get("hits").asJsonArray
-        loadDataIntoTable(hits)
+        loadDataIntoArray(hits)
     }
 
-    private fun loadDataIntoTable(data: JsonArray) {
+    private fun loadDataIntoArray(data: JsonArray) {
         var tmpRecipeList: ArrayList<Recipe> = ArrayList()
         data.forEach {
             var tmpRecipe = Recipe("", "", "", "", "", "", "", "", 0.0, 0.0)
             var recipeObject = it.asJsonObject.get("recipe").asJsonObject
+            var tmpId = recipeObject.get("uri").asString
+            tmpRecipe.id = tmpId.substring(tmpId.lastIndexOf("#recipe_") + 8)
             tmpRecipe.countryType =
                 jsonArrayToCustomString(recipeObject.getAsJsonArray("cuisineType"))
             tmpRecipe.calories = recipeObject.get("calories").asDouble

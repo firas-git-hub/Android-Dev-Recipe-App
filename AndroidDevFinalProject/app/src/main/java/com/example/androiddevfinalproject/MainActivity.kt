@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
         goToSavedRecipesButton = findViewById(R.id.viewRecipesButt)
         goToSavedRecipesButton.setOnClickListener{
             intent = Intent(this, RecipesListActivity::class.java)
-            intent.putExtra("savedrecipes", true)
+            intent.putExtra("savedRecipes", true)
             startActivity(intent)
         }
     }
