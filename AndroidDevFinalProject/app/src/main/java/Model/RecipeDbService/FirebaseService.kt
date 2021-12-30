@@ -53,4 +53,15 @@ class FirebaseService {
         })
     }
 
+    fun deleteRecipe(position: Int, context: Context){
+        var tmpRecipe = recipeList.recipes[position]
+        if(dbRef.child("recipes").child(tmpRecipe.id) != null){
+            dbRef.child("recipes").child(tmpRecipe.id).removeValue()
+            recipeList.recipes.removeAt(position)
+        }
+
+        else
+            Toast.makeText(context, "Looks like the recipe is already deleted.", Toast.LENGTH_SHORT).show()
+    }
+
 }

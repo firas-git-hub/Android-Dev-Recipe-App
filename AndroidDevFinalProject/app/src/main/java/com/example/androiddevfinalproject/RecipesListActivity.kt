@@ -17,7 +17,7 @@ class RecipesListActivity : AppCompatActivity() {
     lateinit var goBackButton: Button
     lateinit var recipesRecyclerView: RecyclerView
     lateinit var spinnerProgress: ProgressBar
-    var isSavedrecipesRequest = false
+    var isSavedRecipesRequest = false
     var firebaseService = FirebaseService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +25,6 @@ class RecipesListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_recipes_list)
 
         bindVariables()
-        setEvents()
         spinnerProgress.visibility = View.VISIBLE
         loadrecipes()
         spinnerProgress.visibility = View.GONE
@@ -36,32 +35,36 @@ class RecipesListActivity : AppCompatActivity() {
         goBackButton.setOnClickListener {
             finish()
         }
+        if (intent.hasExtra("savedRecipes")) {
+            if (intent.getBooleanExtra("savedRecipes", false)){
+                isSavedRecipesRequest = true
+            }
+        }
         recipesRecyclerView = findViewById(R.id.recipesRecyclerView)
         recipesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        recipesRecyclerView.adapter = recipesAdapter(this)
+        recipesRecyclerView.adapter = recipesAdapter(this, isSavedRecipesRequest)
         spinnerProgress = findViewById(R.id.recipeListProgressBar)
     }
 
-    fun setEvents() {
-
-    }
-
-    fun loadrecipes(){
-        if(intent.hasExtra("savedRecipes")){
-            if(intent.getBooleanExtra("savedRecipes",false))
+    fun loadrecipes() {
+        if (isSavedRecipesRequest) {
             loadSavedrecipes(recipesRecyclerView)
-        }
-        else{
+        } else {
             loadrecipesFromSelectedCountry()
         }
 
     }
 
-    fun loadSavedrecipes(recipesRV: RecyclerView){
+    fun loadSavedrecipes(recipesRV: RecyclerView) {
         firebaseService.readRecipesFromDb(recipesRV)
     }
 
-    fun loadrecipesFromSelectedCountry(){
-        RecipeApiService.getRecipies(intent.getStringExtra("countryType")!!, "public", this.applicationContext, recipesRecyclerView)
+    fun loadrecipesFromSelectedCountry() {
+        RecipeApiService.getRecipies(
+            intent.getStringExtra("countryType")!!,
+            "public",
+            this.applicationContext,
+            recipesRecyclerView
+        )
     }
 }
