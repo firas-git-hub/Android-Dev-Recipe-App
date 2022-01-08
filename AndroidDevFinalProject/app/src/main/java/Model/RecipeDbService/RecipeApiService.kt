@@ -1,9 +1,11 @@
 package Model.RecipeDbService
 
 import Model.entities.Recipe
-import Model.entities.RecipesList
 import android.content.Context
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androiddevfinalproject.R
 import com.example.androiddevfinalproject.recipeList
@@ -16,15 +18,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.coroutines.suspendCoroutine
 
 object RecipeApiService {
 
-    fun getRecipies(
+    fun getRecipes(
         cuisineType: String,
         type: String,
         context: Context,
-        recyclerView: RecyclerView
+        recyclerView: RecyclerView,
+        spinner: ProgressBar
     ) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.edamam.com/api/recipes/v2/")
@@ -32,7 +34,7 @@ object RecipeApiService {
             .build()
 
         val service = retrofit.create(RecipeApiInterface::class.java)
-        val call: Call<JsonElement> = service.getRecipies(
+        val call: Call<JsonElement> = service.getRecipes(
             context.getString(R.string.edamamDBAppKey),
             context.getString(R.string.edamamDBAppId),
             type,
@@ -43,12 +45,14 @@ object RecipeApiService {
                 if (response.isSuccessful) {
                     bindValues(response)
                     recyclerView.adapter!!.notifyDataSetChanged()
-
+                    spinner.visibility = View.GONE
                 }
             }
 
             override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                spinner.visibility = View.GONE
                 Log.d("Error", t.message.toString())
+                Toast.makeText(context, context.getString(R.string.edamamApiRequestFailureMessage), Toast.LENGTH_SHORT).show()
             }
         })
     }

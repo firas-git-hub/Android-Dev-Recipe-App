@@ -8,21 +8,24 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentTransaction
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.tabs.TabLayout
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+class MainActivity : AppCompatActivity() {
 
-    val coarseLocationRQ = 1
-    val fineLocationRQ = 2
-    lateinit var mapFragment: SupportMapFragment
-    lateinit var map: GoogleMap
-    lateinit var goToSavedRecipesButton: Button
+    private val coarseLocationRQ = 1
+    private val fineLocationRQ = 2
+    lateinit var recipeViewPager: ViewPager2
+    lateinit var recipeTabLayout: TabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
         bindVariables()
         if(chkPermissions()) {
             setEvents()
+            setupTabBar()
         }
         else {
             finishAffinity()
@@ -38,19 +42,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
     }
 
     fun bindVariables(){
-        mapFragment = SupportMapFragment.newInstance()
-        goToSavedRecipesButton = findViewById(R.id.viewRecipesButt)
-        goToSavedRecipesButton.setOnClickListener{
-            intent = Intent(this, RecipesListActivity::class.java)
-            intent.putExtra("savedRecipes", true)
-            startActivity(intent)
-        }
+
+        recipeViewPager = findViewById(R.id.recipeViewPager)
+        recipeTabLayout = findViewById(R.id.recipeTabLayout)
     }
 
     fun setEvents(){
-        mapFragment = supportFragmentManager
-            .findFragmentById(R.id.countriesFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        recipeViewPager.isUserInputEnabled = false
     }
 
     fun chkPermissions(): Boolean{
@@ -59,66 +57,34 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
         }
         else {
             CheckPermissionsService.requestMapPermissions(this, fineLocationRQ, coarseLocationRQ)
+            Toast.makeText(applicationContext, "Please Reload the application.", Toast.LENGTH_SHORT).show()
             return false
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        configureMapUI(map)
-        loadMarkers(map)
-        map.setOnInfoWindowClickListener(this)
-    }
-
-    fun loadMarkers(map: GoogleMap){
-        for (marker in MarkerCoords.markers) {
-            map.addMarker(
-                MarkerOptions()
-                    .position(LatLng(marker.lat, marker.lng ))
-                    .title(marker.name)
-            )
-        }
-    }
-
-    fun configureMapUI(map: GoogleMap){
-        if(CheckPermissionsService.checkMapPermissions(this)){
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    fineLocationRQ
-                )
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                    coarseLocationRQ
-                )
+    fun setupTabBar() {
+        val adapter = RecipeTabPageAdapter(this, recipeTabLayout.tabCount)
+        recipeViewPager.adapter = adapter
+        recipeViewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                recipeTabLayout.selectTab(recipeTabLayout.getTabAt(position))
             }
-            else{
-                map.isMyLocationEnabled = true
+        })
+
+        recipeTabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                if(tab.position == 1){
+                    adapter.refreshFragment(tab.position)
+                    recipeViewPager.adapter!!.notifyItemChanged((tab.position))
+                }
             }
-        }
-        with(map.uiSettings){
-            isCompassEnabled = true
-            isZoomControlsEnabled = true
-            isMyLocationButtonEnabled = true
-        }
-    }
 
-    companion object {
-        var MarkerList: ArrayList<Marker> = ArrayList()
-    }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
 
-    override fun onInfoWindowClick(p0: Marker) {
-        val intent = Intent(this, RecipesListActivity::class.java)
-        intent.putExtra("countryType", p0.title)
-        startActivity(intent)
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                recipeViewPager.currentItem = tab.position
+            }
+        })
     }
 }

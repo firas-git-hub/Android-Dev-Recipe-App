@@ -1,7 +1,7 @@
 package Model.entities
 
+import android.graphics.Bitmap
 import com.google.gson.annotations.SerializedName
-import java.net.URL
 
 data class Recipe(
     var id: String = "",

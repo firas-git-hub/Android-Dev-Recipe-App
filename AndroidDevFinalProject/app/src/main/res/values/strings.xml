@@ -1,6 +1,16 @@
 <resources>
-    <string name="app_name">Android Dev Final Project</string>
-    <string name="GoogleMapsApiKey">AIzaSyD-y7qSnVJwK308Yg3Cc82mCJLxS1Msavs</string>
+    <string name="appName">Android Dev Final Project</string>
+    <string name="googleMapsApiKey">AIzaSyD-y7qSnVJwK308Yg3Cc82mCJLxS1Msavs</string>
     <string name="edamamDBAppKey">7b24e2f5f3ee27835737f14d6c889214</string>
     <string name="edamamDBAppId">ce3d8987</string>
+    <string name="recipeMapTabName">MAP</string>
+    <string name="savedRecipesTabName">SAVED RECIPES</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edamamApiRequestFailureMessage">The request was not successful, Please try again.</string>
+    <string name="recipeDetailsNotificationTitle">Hope you like the recipe.</string>
+    <string name="recipeDetailsNotificationDescription">This is a reminder of the ingredients list as a notification</string>
+    <string name="recipeDetailsActivityNotificationChannelName">RecipeDetailsActivity</string>
+    <string name="recipeDetailsActivityNotificationChannelText">displaysRecipesIngredients</string>
+    <string name="FirebaseFCMChannelId">FirebaseFCMChannelId</string>
 </resources>

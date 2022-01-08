@@ -14,7 +14,7 @@ import java.util.*
 interface RecipeApiInterface {
     //https://api.edamam.com/api/recipes/v2
     @GET("https://api.edamam.com/api/recipes/v2")
-    fun getRecipies(
+    fun getRecipes(
         @Query("app_key") applicationKey: String,
         @Query("app_id") applicationId: String,
         @Query("type") type: String,
